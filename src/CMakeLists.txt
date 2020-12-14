@@ -5,27 +5,28 @@ set(SOURCES
   tuningAdjustment.c
   midi.c
   stft.c
-  comparison.c
-  pitchStrat.c
-  onsetStrat.c
-  onsetsds.c
+  extractMelodyProcedure.c
   silenceStrat.c
   fVADsd.c
-  HPSDetection.c
-  BaNaDetection.c
-  findpeaks.c
-  findCandidates.c
-  candidateSelection.c
   lists.c
   winSampleConv.c
   noteCompilation.c
   melodyextraction.c
-  simpleDetFunc.c
-  gammatoneFilter.c
-  filterBank.c
-  testOnset.c
   resample.c
   io_wav.c
+  pitch/pitchStrat.c
+  pitch/BaNaDetection.c
+  pitch/candidateSelection.c
+  pitch/findCandidates.c
+  pitch/findpeaks.c
+  pitch/HPSDetection.c
+  onset/onsetStrat.c
+  onset/onsetsds.c
+  onset/simpleDetFunc.c
+  onset/calcSummedLagCorrentrograms.c
+  onset/gammatoneFilter.c
+  onset/filterBank.c
+  onset/pairTransientDetection.c
 )
 
 
@@ -37,6 +38,13 @@ TARGET_LINK_LIBRARIES(extract m fftw3f sndfile fvad samplerate)
 TARGET_LINK_LIBRARIES(melodyextraction m fftw3f sndfile fvad samplerate)
 TARGET_LINK_LIBRARIES(melodyextraction_static m fftw3f sndfile fvad samplerate)
 
-install(TARGETS extract
-  RUNTIME DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../
-  )
+# place the constructed binary and libraries into a places
+# - moving the libraries is necessary for supporting the python bindings for
+#   out-of-source builds.
+# - in the future, this should be modified located so that the libraries are
+#   installed to appropriate locations
+install(TARGETS extract melodyextraction melodyextraction_static
+  RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin
+  LIBRARY DESTINATION ${CMAKE_SOURCE_DIR}/.libs
+  ARCHIVE DESTINATION ${CMAKE_SOURCE_DIR}/.libs
+)
